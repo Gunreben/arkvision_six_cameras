@@ -1,6 +1,59 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
+import cv2
+from cv_bridge import CvBridge
+import numpy as np
+
+class CameraStreamNode(Node):
+    def __init__(self):
+        super().__init__('camera_stream_node')
+        self.declare_parameter('num_cameras', 6)
+        self.declare_parameter('publish_rate', 20)
+
+        num_cameras = self.get_parameter('num_cameras').value
+        publish_rate = self.get_parameter('publish_rate').value
+
+        self.bridge = CvBridge()
+        self.publishers = []
+        self.timers = []
+
+        base_ip = 70
+        for i in range(num_cameras):
+            camera_ip = f"rtsp://192.168.26.{base_ip+i}:8554/jpeg"
+            publisher = self.create_publisher(Image, f'camera/{i}/image', 10)
+            timer = self.create_timer(1.0 / publish_rate, self.create_camera_callback(camera_ip, publisher))
+            self.publishers.append(publisher)
+            self.timers.append(timer)
+
+    def create_camera_callback(self, camera_ip, publisher):
+        def camera_callback():
+            cap = cv2.VideoCapture(camera_ip)
+            ret, frame = cap.read()
+            if ret:
+                msg = self.bridge.cv2_to_imgmsg(frame, encoding="bgr8")
+                publisher.publish(msg)
+            cap.release()
+        return camera_callback
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    camera_stream_node = CameraStreamNode()
+    rclpy.spin(camera_stream_node)
+    camera_stream_node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+
+'''import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
 import threading
@@ -16,7 +69,6 @@ class CameraStreamNode(Node):
 		# Generate the next five IP addresses
 		self.camera_urls = generate_rtsp_urls(base_camera_ip)
 		
-        = [f"rtsp://{base_camera_ip[:-1]}{i}:8554/h264" for i in range(int(base_camera_ip.split('.')[-1]), int(base_camera_ip.split('.')[-1]) + 6)]
         self.cv_bridge = CvBridge()
         self.shutdown_flag = threading.Event()  # Shutdown flag
         for url in self.camera_urls:
@@ -74,5 +126,5 @@ def main(args=None):
     rclpy.spin(camera_stream_node)
 
 if __name__ == '__main__':
-    main()
+    main()'''
 
