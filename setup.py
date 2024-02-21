@@ -21,6 +21,7 @@ setup(
     entry_points={
 		'console_scripts': [
 		'camera_stream_node = arkvision_six_cameras.camera_stream_node:main',
+		'camera_stream_launch = arkvision_six_cameras.camera_stream_launch:main',
 		],
     },
 )
