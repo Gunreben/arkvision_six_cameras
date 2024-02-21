@@ -15,7 +15,7 @@ class CameraStreamNode(Node):
         parts = camera_ip.split('.')
         # Get the last part of the IP address
         last_part = parts[-1]
-        self.publisher_ = self.create_publisher(Image, 'camera_image/' + str(last_part), 10)
+        self.publisher_ = self.create_publisher(Image, 'camera_image/_' + str(last_part), 10)
         self.bridge = CvBridge()
         self.timer = self.create_timer(1.0 / self.publish_rate, self.timer_callback)
         self.cap = cv2.VideoCapture(f"rtsp://{camera_ip}:8554/h264")  # Use the camera_ip parameter
