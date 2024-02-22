@@ -2,25 +2,11 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>arkvision_six_cameras</name>
-  <version>0.0.1</version>
+  <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="gunreben@todo.todo">gunreben</maintainer>
   <license>TODO: License declaration</license>
 
-  <!-- Dependencies -->
-  <buildtool_depend>ament_cmake</buildtool_depend>
-  <depend>rclpy</depend>
-  <depend>sensor_msgs</depend>
-  <depend>cv_bridge</depend>
-  <depend>opencv</depend> <!-- If you're directly using OpenCV in your package -->
-
-  <exec_depend>rclpy</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>cv_bridge</exec_depend>
-  <exec_depend>opencv</exec_depend> <!-- Similarly for runtime dependency -->
-
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
