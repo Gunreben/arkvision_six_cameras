@@ -8,91 +8,89 @@ import threading
 from rclpy.executors import MultiThreadedExecutor
 
 class CameraStreamNode(Node):
-    def __init__(self, camera_ip = '192.168.26.70'):
+    """
+    Node for streaming video from a camera over ROS2.
+    """
+    def __init__(self, camera_ip='192.168.26.70'):
+        """
+        Initialize the camera stream node.
         
-        camera_label = self.get_camera_label(camera_ip)
-
-        super().__init__('camera_stream_node_num' + camera_label)
+        :param camera_ip: IP address of the camera
+        """
+        camera_label = self._get_camera_label(camera_ip)
+        node_name = f'camera_stream_node_{camera_label}'
+        super().__init__(node_name)
 
         self.declare_parameter('publish_rate', 50.0)
-        #self.declare_parameter('camera_ip', '192.168.26.70')  # Declare camera_ip parameter with default value
 
-        self.publish_rate = self.get_parameter('publish_rate').get_parameter_value().double_value
-        #camera_ip = self.get_parameter('camera_ip').get_parameter_value().string_value  # Get the camera_ip paramete
-
-        self.get_logger().info('Creating Camera Publisher...')
-
-
-
-        self.publisher_ = self.create_publisher(Image, 'camera_image/cam_' + camera_label, 10)
-
+        publish_rate = self.get_parameter('publish_rate').get_parameter_value().double_value
+        self._logger.info('Creating Camera Publisher...')
+        self.publisher_ = self.create_publisher(Image, f'camera_image/cam_{camera_label}', 10)
         self.bridge = CvBridge()
-        self.timer = self.create_timer(1.0 / self.publish_rate, self.timer_callback)
+        self.timer = self.create_timer(1.0 / publish_rate, self._timer_callback)
+
 
         ### currently not working at all.
         #self.cap = cv2.VideoCapture(f"rtsp://{camera_ip}:8554/jpeg")
         ###working but with huge delay
         #self.cap = cv2.VideoCapture(f"rtsp://{camera_ip}:8554/h264")
 
-        self.cap = cv2.VideoCapture(f"http://{camera_ip}:81")  # Use the camera_ip parameter
-
+        # Initializing video capture with HTTP protocol
+        self.cap = cv2.VideoCapture(f"http://{camera_ip}:81")
         if not self.cap.isOpened():
             self.get_logger().error('Failed to open camera stream.')
             sys.exit(1)
 
-    def timer_callback(self):
+    def _timer_callback(self):
+        """
+        Timer callback to publish camera frames.
+        """
         ret, frame = self.cap.read()
         if not ret:
             self.get_logger().error('Failed to capture frame from camera.')
             return
 
-        ros_image = self.bridge.cv2_to_imgmsg(frame, encoding="passthrough") ###problematic?
+        ros_image = self.bridge.cv2_to_imgmsg(frame, encoding="passthrough")
         self.publisher_.publish(ros_image)
 
-    def get_camera_label(self, camera_ip):
-        parts = camera_ip.split('.')
-        # Get the last part of the IP address
-        last_part = parts[-1]
-        #dictionary with camlabels
-        ip_dictionary = {'70': 'FL','71': 'FR','72': 'BL','73': 'BR','74': 'FC','75': 'BC'}        
-        # Get the corresponding label for the last part of the IP address
-        label = ip_dictionary.get(last_part, last_part)
-        return label
+    def _get_camera_label(self, camera_ip):
+        """
+        Get the camera label based on its IP address.
+        
+        :param camera_ip: IP address of the camera
+        :return: Corresponding camera label
+        """
+        last_part = camera_ip.split('.')[-1]
+        ip_dictionary = {'70': 'VL', '71': 'ML', '72': 'HL', '73': 'HR', '74': 'MR', '75': 'VR'}
+        return ip_dictionary.get(last_part, last_part)
 
 def main(args=None):
+    """
+    Main function to run the camera stream nodes.
+    """
     rclpy.init(args=args)
-
-    #TODO: Parse this as parameter
     camera_ips = ['192.168.26.70', '192.168.26.71', '192.168.26.72', '192.168.26.73', '192.168.26.74', '192.168.26.75']
-    
-    nodes = []  # List to keep track of created nodes
-
-    # Create an executor for managing threads
+    nodes = []
     executor = MultiThreadedExecutor(num_threads=6)
 
-
-    # Create and add nodes for each camera IP to the executor
     for ip in camera_ips:
         node = CameraStreamNode(ip)
         executor.add_node(node)
-        nodes.append(node)  # Store the node for potential future use
+        nodes.append(node)
 
-    # Use a separate thread for the executor to allow for parallel callback processing
     executor_thread = threading.Thread(target=executor.spin, daemon=True)
     executor_thread.start()
-    print("executor started!")
+    print("Executor started!")
 
     try:
-        # Keep the main thread alive until a KeyboardInterrupt (Ctrl+C) is received.
         executor_thread.join()
     except KeyboardInterrupt:
         pass
     finally:
-        # Cleanup: Stop the executor and shutdown rclpy
         executor.shutdown()
         for node in nodes:
             node.destroy_node()
         rclpy.shutdown()
-    
+
 if __name__ == '__main__':
     main()
