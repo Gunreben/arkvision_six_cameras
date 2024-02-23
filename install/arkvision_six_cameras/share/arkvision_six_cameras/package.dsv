@@ -1,0 +1,6 @@
+source;share/arkvision_six_cameras/hook/pythonpath.ps1
+source;share/arkvision_six_cameras/hook/pythonpath.dsv
+source;share/arkvision_six_cameras/hook/pythonpath.sh
+source;share/arkvision_six_cameras/hook/ament_prefix_path.ps1
+source;share/arkvision_six_cameras/hook/ament_prefix_path.dsv
+source;share/arkvision_six_cameras/hook/ament_prefix_path.sh
