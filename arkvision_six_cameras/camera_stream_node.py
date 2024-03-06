@@ -31,12 +31,13 @@ class CameraStreamNode(Node):
 
 
         ### currently not working at all.
-        #self.cap = cv2.VideoCapture(f"rtsp://{camera_ip}:8554/jpeg")
+        self.cap = cv2.VideoCapture(f"rtsp://{camera_ip}:8554/jpeg", cv2.CAP_GSTREAMER) ### NICO 
         ###working but with huge delay
         #self.cap = cv2.VideoCapture(f"rtsp://{camera_ip}:8554/h264")
 
         # Initializing video capture with HTTP protocol
-        self.cap = cv2.VideoCapture(f"http://{camera_ip}:81")
+        #self.cap = cv2.VideoCapture(f"http://{camera_ip}:81")
+        
         if not self.cap.isOpened():
             self.get_logger().error('Failed to open camera stream.')
             sys.exit(1)
@@ -50,7 +51,7 @@ class CameraStreamNode(Node):
             self.get_logger().error('Failed to capture frame from camera.')
             return
 
-        ros_image = self.bridge.cv2_to_imgmsg(frame, encoding="passthrough")
+        ros_image = self.bridge.cv2_to_imgmsg(frame, encoding="bgr8")
         self.publisher_.publish(ros_image)
 
     def _get_camera_label(self, camera_ip):
