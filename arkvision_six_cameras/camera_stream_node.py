@@ -29,9 +29,20 @@ class CameraStreamNode(Node):
         self.bridge = CvBridge()
         self.timer = self.create_timer(1.0 / publish_rate, self._timer_callback)
 
+        #TODO: optimize this!
+        gst_pipeline = (
+            "rtspsrc location=rtsp://{camera_ip}:8554/jpeg latency=80 ! "
+            "rtpjpegdepay ! "
+            "nvv4l2decoder mjpeg=1 ! "
+            "nvvidconv ! "
+            "video/x-raw,format=BGRx ! "
+            "videoconvert ! "
+            "video/x-raw,format=BGR ! "
+            "appsink"
+        )
 
-        ### currently not working at all.
-        self.cap = cv2.VideoCapture(f"rtsp://{camera_ip}:8554/jpeg", cv2.CAP_GSTREAMER) ### NICO 
+        # Create a VideoCapture object with the GStreamer pipeline
+        self.cap = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)
         ###working but with huge delay
         #self.cap = cv2.VideoCapture(f"rtsp://{camera_ip}:8554/h264")
 
