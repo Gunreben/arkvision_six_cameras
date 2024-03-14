@@ -31,7 +31,7 @@ class CameraStreamNode(Node):
 
         #TODO: optimize this!
         gst_pipeline = (
-            "rtspsrc location=rtsp://{camera_ip}:8554/jpeg latency=80 ! "
+            f"rtspsrc location=rtsp://{camera_ip}:8554/jpeg latency=80 ! "
             "rtpjpegdepay ! "
             "nvv4l2decoder mjpeg=1 ! "
             "nvvidconv ! "
