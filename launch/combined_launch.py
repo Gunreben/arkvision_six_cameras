@@ -10,7 +10,7 @@ def generate_launch_description():
     ouster_ros_pkg_prefix = FindPackageShare('ouster_ros').find('ouster_ros')
 
     # Define the path to the launch files
-    arkvision_launch_file = PythonLaunchDescriptionSource([arkvision_six_cameras_pkg_prefix, '/launch/camera_node_launch.py'])
+    arkvision_launch_file = PythonLaunchDescriptionSource([arkvision_six_cameras_pkg_prefix, '/launch/camera_stream_launch.py'])
     blickfeld_launch_file = PythonLaunchDescriptionSource([blickfeld_qb2_ros2_driver_pkg_prefix, '/launch/blickfeld_qb2_ros2_driver.launch.py'])
     ouster_launch_file = PythonLaunchDescriptionSource([ouster_ros_pkg_prefix, '/launch/driver.launch.py'])
 
