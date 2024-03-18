@@ -15,12 +15,14 @@ def generate_launch_description():
     # Include the launch descriptions
     ouster_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(ouster_launch_path),
-        #launch_arguments={'parameter_overrides': 'your_parameters_here'}.items(),
+        # Uncomment and add launch arguments if needed
+        # launch_arguments={'parameter_overrides': 'your_parameters_here'}.items(),
     )
 
     blickfeld_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(blickfeld_launch_path),
-        #launch_arguments={'parameter_overrides': 'your_parameters_here'}.items(),
+        # Uncomment and add launch arguments if needed
+        # launch_arguments={'parameter_overrides': 'your_parameters_here'}.items(),
     )
 
     # Return the LaunchDescription object
