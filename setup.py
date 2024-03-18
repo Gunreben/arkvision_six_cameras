@@ -10,6 +10,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name + '/launch', ['launch/camera_stream_launch.py']),
+        ('share/' + package_name + '/launch', ['launch/combined_launch.py']),
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],
@@ -23,6 +24,7 @@ setup(
 		'console_scripts': [
 		'camera_stream_node = arkvision_six_cameras.camera_stream_node:main',
 		'camera_stream_launch = arkvision_six_cameras.camera_stream_launch:main',
+		'combined_launch = arkvision_six_cameras.combined_launch:main',
 		],
     },
 )
