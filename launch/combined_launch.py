@@ -4,31 +4,20 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
-    # Find the package share directories
-    ouster_share = FindPackageShare(package='ouster_ros').find('ouster_ros')
-    blickfeld_share = FindPackageShare(package='blickfeld_qb2_ros2_driver').find('blickfeld_qb2_ros2_driver')
+    # Find the package where the launch files are located
+    arkvision_six_cameras_pkg_prefix = FindPackageShare('arkvision_six_cameras').find('arkvision_six_cameras')
+    blickfeld_qb2_ros2_driver_pkg_prefix = FindPackageShare('blickfeld_qb2_ros2_driver').find('blickfeld_qb2_ros2_driver')
+    ouster_ros_pkg_prefix = FindPackageShare('ouster_ros').find('ouster_ros')
 
-    # Define the launch file paths
-    ouster_launch_path = ouster_share / 'launch' / 'driver.launch.py'
-    blickfeld_launch_path = blickfeld_share / 'launch' / 'blickfeld_qb2_ros2_driver.launch.py'
+    # Define the path to the launch files
+    arkvision_launch_file = PythonLaunchDescriptionSource([arkvision_six_cameras_pkg_prefix, '/launch/camera_node_launch.py'])
+    blickfeld_launch_file = PythonLaunchDescriptionSource([blickfeld_qb2_ros2_driver_pkg_prefix, '/launch/blickfeld_qb2_ros2_driver.launch.py'])
+    ouster_launch_file = PythonLaunchDescriptionSource([ouster_ros_pkg_prefix, '/launch/driver.launch.py'])
 
-    # Include the launch descriptions
-    ouster_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(ouster_launch_path),
-        # Uncomment and add launch arguments if needed
-        # launch_arguments={'parameter_overrides': 'your_parameters_here'}.items(),
-    )
-
-    blickfeld_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(blickfeld_launch_path),
-        # Uncomment and add launch arguments if needed
-        # launch_arguments={'parameter_overrides': 'your_parameters_here'}.items(),
-    )
-
-    # Return the LaunchDescription object
+    # Include the launch files
     return LaunchDescription([
-        ouster_launch,
-        blickfeld_launch,
-        ouster_launch  # Assuming you want to launch the ouster driver twice for different configurations
+        IncludeLaunchDescription(arkvision_launch_file),
+        IncludeLaunchDescription(blickfeld_launch_file),
+        IncludeLaunchDescription(ouster_launch_file)
     ])
 
