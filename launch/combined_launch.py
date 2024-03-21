@@ -1,5 +1,6 @@
-from launch import LaunchDescription, LaunchConfiguration
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.substitutions import LaunchConfiguration  # Corrected import for LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
 
@@ -23,15 +24,15 @@ def generate_launch_description():
         description='Model of the ZED camera.'
     )
 
-    # Include the launch files
+    # Include the launch files with the ZED launch file having the camera_model argument passed
     return LaunchDescription([
-        camera_model_arg,  # Declare the argument before including the launch file
+        camera_model_arg,
         IncludeLaunchDescription(arkvision_launch_file),
         IncludeLaunchDescription(blickfeld_launch_file),
         IncludeLaunchDescription(ouster_launch_file),
         IncludeLaunchDescription(
             zed_launch_file,
-            launch_arguments={'camera_model': LaunchConfiguration('camera_model')}.items()  # Pass the argument to the launch file
+            launch_arguments=[('camera_model', LaunchConfiguration('camera_model'))]  # Corrected argument passing
         )
     ])
 
