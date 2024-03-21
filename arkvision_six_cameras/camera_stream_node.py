@@ -1,8 +1,8 @@
+import cv2 ###Needs to be in first place, no idea, why.
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-import cv2
 import sys
 import threading
 from rclpy.executors import MultiThreadedExecutor
