@@ -30,6 +30,7 @@ class CameraStreamNode(Node):
         self.timer = self.create_timer(1.0 / publish_rate, self._timer_callback)
 
         #TODO: optimize this!
+        """
         gst_pipeline = (
             f"rtspsrc location=rtsp://{camera_ip}:8554/jpeg latency=80 ! "
             "rtpjpegdepay ! "
@@ -45,9 +46,9 @@ class CameraStreamNode(Node):
         self.cap = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)
         ###working but with huge delay
         #self.cap = cv2.VideoCapture(f"rtsp://{camera_ip}:8554/h264")
-
+        """
         # Initializing video capture with HTTP protocol
-        #self.cap = cv2.VideoCapture(f"http://{camera_ip}:81")
+        self.cap = cv2.VideoCapture(f"http://{camera_ip}:81")
         
         if not self.cap.isOpened():
             self.get_logger().error('Failed to open camera stream.')
@@ -63,6 +64,7 @@ class CameraStreamNode(Node):
             return
 
         ros_image = self.bridge.cv2_to_imgmsg(frame, encoding="bgr8")
+        
         self.publisher_.publish(ros_image)
 
     def _get_camera_label(self, camera_ip):
