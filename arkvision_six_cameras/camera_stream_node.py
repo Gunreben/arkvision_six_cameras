@@ -21,7 +21,7 @@ class CameraStreamNode(Node):
         node_name = f'camera_stream_node_{camera_label}'
         super().__init__(node_name)
 
-        self.declare_parameter('publish_rate', 50.0)
+        self.declare_parameter('publish_rate', 15.0)
 
         publish_rate = self.get_parameter('publish_rate').get_parameter_value().double_value
         self._logger.info('Creating Camera Publisher...')
@@ -75,7 +75,7 @@ class CameraStreamNode(Node):
         :return: Corresponding camera label
         """
         last_part = camera_ip.split('.')[-1]
-        ip_dictionary = {'70': 'VL', '71': 'ML', '72': 'HL', '73': 'HR', '74': 'MR', '75': 'VR'}
+        ip_dictionary = {'70': 'FL', '71': 'ML', '72': 'BL', '73': 'BR', '74': 'MR', '75': 'FR'}
         return ip_dictionary.get(last_part, last_part)
 
 def main(args=None):
