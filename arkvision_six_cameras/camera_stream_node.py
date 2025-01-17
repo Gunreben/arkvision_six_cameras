@@ -21,7 +21,7 @@ class CameraStreamNode(Node):
         node_name = f'camera_stream_node_{camera_label}'
         super().__init__(node_name)
 
-        self.declare_parameter('publish_rate', 15.0)
+        self.declare_parameter('publish_rate', 20.0)
 
         publish_rate = self.get_parameter('publish_rate').get_parameter_value().double_value
         self._logger.info('Creating Camera Publisher...')
