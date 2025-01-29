@@ -41,7 +41,7 @@ class CameraStreamNode(Node):
             self._logger.info(f"Publishing compressed images for camera {camera_label}")
             self.publisher_ = self.create_publisher(
                 CompressedImage,
-                f'camera_image/Cam_{camera_label}',
+                f'camera_image/Cam_{camera_label}/compressed',
                 10
             )
         else:
